@@ -16,7 +16,7 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 # ---------- SETUP ----------
 app = FastAPI()
 origins = [
-    os.environ.get("FRONTEND_URL"),
+    os.environ.get("https://personalstudyai.vercel.app/"),
     "*"
 ]
 
@@ -271,4 +271,5 @@ async def analyze_question_papers(request: Request):
         return {"analysis": analysis}
     except Exception as e:
         return {"error": str(e)}
+
 
