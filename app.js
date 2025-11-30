@@ -17,7 +17,7 @@ let currentNoteId = null;
 let studyStartTime = null;
 let questionPapers = [];
 let qpAnalysisSummary = "";
-const API_BASE_URL = '';
+const API_BASE_URL = 'https://personalstudy-ai.onrender.com';
 
 // Data Management with Supabase
 async function loadData() {
@@ -1239,4 +1239,5 @@ style.textContent = `
         }
     }
 `;
+
 document.head.appendChild(style);
