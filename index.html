@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PersonalStudy - Your Private Study Assistant</title>
+    <!-- Add after the <title> tag -->
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4361ee">
+
+    <!-- iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="PersonalStudy">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+
+    <!-- Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- Windows -->
+    <meta name="msapplication-TileColor" content="#4361ee">
+    <meta name="msapplication-TileImage" content="icons/icon-144x144.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="icons/icon-16x16.png">
+    <link rel="stylesheet" href="styles.css">
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+</head>
+<body>
+    <!-- Authentication Page -->
+    <div id="auth-page" class="auth-container">
+        <div class="auth-box">
+            <h1>Personal<span style="color: var(--dark);">Study</span></h1>
+            
+            <!-- Login Form -->
+            <div id="login-form">
+                <h2 style="margin-bottom: 1.5rem;">Welcome Back</h2>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="login-email" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="login-password" placeholder="Enter your password">
+                </div>
+                <button class="auth-btn" onclick="handleLogin()">Login</button>
+                <div class="auth-switch">
+                    Don't have an account? <a href="#" onclick="switchToSignup()">Sign Up</a>
+                </div>
+            </div>
+
+            <!-- Signup Form -->
+            <div id="signup-form" class="hidden">
+                <h2 style="margin-bottom: 1.5rem;">Create Account</h2>
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="signup-name" placeholder="Enter your name">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="signup-email" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="signup-password" placeholder="Create a password (min 6 characters)">
+                </div>
+                <button class="auth-btn" onclick="handleSignup()">Sign Up</button>
+                <div class="auth-switch">
+                    Already have an account? <a href="#" onclick="switchToLogin()">Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="main-app" class="hidden">
+        <header>
+            <div class="header-container">
+                <div class="logo">Personal<span>Study</span></div>
+                <nav>
+                    <ul>
+                        <li><a href="#" class="active" onclick="showPage('dashboard')">Dashboard</a></li>
+                        <li><a href="#" onclick="showPage('account')">Account</a></li>
+                        <li><a href="#" onclick="showPage('settings')">Settings</a></li>
+                        <li><a href="#" onclick="handleLogout()">Logout</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+        <main>
+            <div class="container">
+                <div class="sidebar">
+                    <div class="menu-item active" onclick="showSection('documents-section')">
+                        <span>📄 Documents</span>
+                    </div>
+                    <div class="menu-item" onclick="showSection('qa-section')">
+                        <span>💬 AI Q&A</span>
+                    </div>
+                    <div class="menu-item" onclick="showSection('flashcards-section')">
+                        <span>🎴 Flashcards</span>
+                    </div>
+                    <div class="menu-item" onclick="showSection('notes-section')">
+                        <span>📝 Notes</span>
+                    </div>
+                    <div class="menu-item" onclick="showSection('question-paper-section')">
+                        <span>📊 Question Paper Analyzer</span>
+                    </div>
+                    <div class="menu-item" onclick="showSection('stats-section')">
+                        <span>📈 Stats</span>
+                    </div>
+                </div>
+
+                <div class="content">
+                    <!-- Documents Section -->
+                    <div id="documents-section" class="section">
+                        <div class="section-header">
+                            <h2>My Study Documents</h2>
+                            <button class="btn btn-primary" onclick="document.getElementById('file-input').click()">Upload New</button>
+                        </div>
+                        
+                        <div class="upload-area" onclick="document.getElementById('file-input').click()">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">📤</div>
+                            <p>Drag & drop files here or <span style="color: var(--primary); font-weight: 500;">browse</span></p>
+                            <p style="font-size: 0.875rem; color: var(--gray); margin-top: 0.5rem;">Supported: PDF, TXT, DOCX</p>
+                            <input type="file" id="file-input" multiple accept=".pdf,.txt,.doc,.docx" style="display: none">
+                        </div>
+                        
+                        <div class="document-list" id="document-list"></div>
+                    </div>
+
+                    <!-- Q&A Section -->
+                    <div id="qa-section" class="section hidden">
+                        <div class="section-header">
+                            <h2>AI Study Assistant</h2>
+                            <button class="btn btn-outlined" onclick="clearChat()">Clear Chat</button>
+                        </div>
+                        
+                        <div class="search-box">
+                            <select id="doc-select">
+                                <option value="">Select a document</option>
+                            </select>
+                        </div>
+
+                        <div class="chat-container" id="chat-container"></div>
+                        
+                        <div class="input-area">
+                            <textarea id="chat-input" placeholder="Ask about your documents..."></textarea>
+                            <button class="btn btn-primary" onclick="sendQuestion()">Send</button>
+                        </div>
+                    </div>
+
+                    <!-- Flashcards Section -->
+                    <div id="flashcards-section" class="section hidden">
+                        <div class="section-header">
+                            <h2>AI Flashcards</h2>
+                            <button class="btn btn-primary" onclick="openFlashcardModal()">Generate from Document</button>
+                        </div>
+                        
+                        <div id="flashcard-display" class="flashcard-container"></div>
+                    </div>
+
+                    <!-- Notes Section -->
+                    <div id="notes-section" class="section hidden">
+                        <div class="section-header">
+                            <h2>AI Study Notes</h2>
+                            <button class="btn btn-primary" onclick="openNotesModal()">Generate from Document</button>
+                        </div>
+                        
+                        <div class="notes-container">
+                            <div class="notes-list" id="notes-list"></div>
+                            <div class="note-editor">
+                                <textarea id="note-content" placeholder="Select a note or generate new ones..."></textarea>
+                                <div class="editor-actions">
+                                    <button class="btn btn-outlined" onclick="saveNote()">Save</button>
+                                    <button class="btn btn-outlined" onclick="downloadNote()">Download</button>
+                                    <button class="btn btn-outlined" onclick="deleteNote()">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stats Section -->
+                    <div id="stats-section" class="section hidden">
+                        <div class="section-header">
+                            <h2>Study Statistics & Progress</h2>
+                        </div>
+                        
+                        <div style="margin-bottom: 2rem;">
+                            <h3>Weekly Study Progress</h3>
+                            <div class="progress-bar">
+                                <div class="progress" id="weekly-progress"></div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span id="study-time-text">0 hours completed</span>
+                                <span>Goal: 20 hours</span>
+                            </div>
+                        </div>
+                        
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value" id="stat-docs">0</div>
+                                <div class="stat-label">Documents Uploaded</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="stat-flashcards">0</div>
+                                <div class="stat-label">Flashcards Created</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="stat-notes">0</div>
+                                <div class="stat-label">Study Notes</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="stat-questions">0</div>
+                                <div class="stat-label">Questions Asked</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="stat-accuracy">0%</div>
+                                <div class="stat-label">Flashcard Accuracy</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="stat-time">0h</div>
+                                <div class="stat-label">Total Study Time</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question Paper Analyzer Section -->
+                    <div id="question-paper-section" class="section hidden">
+                        <div class="section-header">
+                            <h2>Question Paper Analyzer</h2>
+                            <button class="btn btn-primary" onclick="document.getElementById('qp-file-input').click()">Upload Question Papers</button>
+                        </div>
+                        
+                        <input type="file" id="qp-file-input" multiple accept=".pdf,.docx,.txt" style="display: none">
+                        
+                        <div style="margin-top: 1rem;" id="qp-uploaded-list"></div>
+                        
+                        <div style="margin-top: 2rem;">
+                            <button class="btn btn-primary" onclick="analyzeQuestionPapers()">Analyze Papers</button>
+                        </div>
+                        
+                        <div style="margin-top: 2rem;">
+                            <h3>AI Analysis Result</h3>
+                            <div id="qp-analysis-result" style="margin-top: 1rem; white-space: pre-wrap;"></div>
+                            <button class="btn btn-outlined" id="download-analysis-btn" onclick="downloadAnalysis()" style="margin-top: 1rem; display: none;">Download Analysis</button>
+                        </div>
+                        
+                        <div class="chat-container" id="qp-chat-container" style="margin-top: 2rem;"></div>
+                        
+                        <div class="input-area">
+                            <textarea id="qp-chat-input" placeholder="Ask about the analysis or trends..."></textarea>
+                            <button class="btn btn-primary" onclick="sendQPChat()">Send</button>
+                        </div>
+                    </div>
+
+                    <!-- Account Section -->
+                    <div id="account-section" class="section hidden">
+                        <h2>Account Information</h2>
+                        <div style="margin-top: 2rem;">
+                            <div class="form-group">
+                                <label>Full Name</label>
+                                <input type="text" id="account-name" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" id="account-email" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Member Since</label>
+                                <input type="text" id="account-joined" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Settings Section -->
+                    <div id="settings-section" class="section hidden">
+                        <h2>Settings</h2>
+                        <div style="margin-top: 2rem;">
+                            <h3 style="margin-bottom: 1rem;">API Configuration</h3>
+                            <div class="form-group">
+                                <label>OpenAI API Key</label>
+                                <input type="password" id="api-key" placeholder="Enter your OpenAI API key">
+                                <p style="font-size: 0.875rem; color: var(--gray); margin-top: 0.5rem;">
+                                    Get your API key from <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI</a>
+                                </p>
+                            </div>
+                            <button class="btn btn-primary" onclick="saveApiKey()">Save API Key</button>
+
+                            <h3 style="margin: 2rem 0 1rem 0;">Study Goals</h3>
+                            <div class="form-group">
+                                <label>Weekly Study Hours Goal</label>
+                                <input type="number" id="study-goal" value="20" min="1" max="168">
+                            </div>
+                            <button class="btn btn-primary" onclick="saveStudyGoal()">Save Goal</button>
+
+                            <h3 style="margin: 2rem 0 1rem 0;">Data Management</h3>
+                            <button class="btn btn-outlined" onclick="exportData()">Export All Data</button>
+                            <button class="btn btn-outlined" onclick="clearAllData()" style="margin-left: 0.5rem; color: #dc3545; border-color: #dc3545;">Clear All Data</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for Flashcard Generation -->
+    <div id="flashcard-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeFlashcardModal()">&times;</span>
+            <h2>Generate Flashcards</h2>
+            <div class="form-group">
+                <label>Select Document</label>
+                <select id="flashcard-doc-select"></select>
+            </div>
+            <div class="form-group">
+                <label>Number of Flashcards</label>
+                <input type="number" id="flashcard-count" value="10" min="1" max="50">
+            </div>
+            <button class="btn btn-primary" onclick="generateFlashcards()">Generate</button>
+        </div>
+    </div>
+
+    <!-- Modal for Notes Generation -->
+    <div id="notes-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeNotesModal()">&times;</span>
+            <h2>Generate Study Notes</h2>
+            <div class="form-group">
+                <label>Select Document</label>
+                <select id="notes-doc-select"></select>
+            </div>
+            <button class="btn btn-primary" onclick="generateNotes()">Generate Notes</button>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

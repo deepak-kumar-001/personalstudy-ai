@@ -1,0 +1,25 @@
+{
+  "name": "PersonalStudy - AI Study Assistant",
+  "short_name": "PersonalStudy",
+  "description": "Your private AI-powered study assistant with document analysis, flashcards, and notes",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#4361ee",
+  "theme_color": "#4361ee",
+  "orientation": "portrait-primary",
+  "categories": ["education", "productivity"],
+
+  "icons": [
+    {
+      "src": "icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
