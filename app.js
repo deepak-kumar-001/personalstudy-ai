@@ -300,7 +300,7 @@ async function handleFiles(files) {
         formData.append("file", file);
 
         try {
-            const response = await fetch("${API_BASE_URL}/api/upload", {
+            const response = await fetch(`${API_BASE_URL}/api/upload`, {
                 method: "POST",
                 body: formData,
             });
@@ -443,7 +443,7 @@ async function sendQuestion() {
     appendMessage('ai', '<div class="loading"></div>', loadingId);
 
     try {
-        const response = await fetch("${API_BASE_URL}/api/ask", {
+        const response = await fetch(`${API_BASE_URL}/api/ask`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -551,7 +551,7 @@ async function generateFlashcards() {
     display.innerHTML = '<div class="loading" style="margin: 2rem auto;"></div>';
 
     try {
-        const response = await fetch("${API_BASE_URL}/api/flashcards", {
+        const response = await fetch(`${API_BASE_URL}/api/flashcards`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -718,7 +718,7 @@ async function generateNotes() {
     document.getElementById('note-content').value = 'Generating notes...';
 
     try {
-        const response = await fetch("${API_BASE_URL}/api/notes", {
+        const response = await fetch(`${API_BASE_URL}/api/notes`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -874,7 +874,7 @@ async function analyzeQuestionPapers() {
     document.getElementById("qp-analysis-result").innerHTML = "Analyzing... <div class='loading'></div>";
 
     try {
-        const response = await fetch("${API_BASE_URL}/api/analyze-papers", {
+        const response = await fetch(`${API_BASE_URL}/api/analyze-papers`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ documents: questionPapers }),
@@ -907,7 +907,7 @@ async function sendQPChat() {
     appendQPMessage("ai", "<div class='loading'></div>", "qp-loading");
 
     try {
-        const response = await fetch("${API_BASE_URL}/api/ask", {
+        const response = await fetch(`${API_BASE_URL}/api/ask`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -1138,7 +1138,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             formData.append("file", file);
 
             try {
-                const response = await fetch("${API_BASE_URL}/api/upload", {
+                const response = await fetch(`${API_BASE_URL}/api/upload`, {
                     method: "POST",
                     body: formData,
                 });
@@ -1239,5 +1239,4 @@ style.textContent = `
         }
     }
 `;
-
 document.head.appendChild(style);
