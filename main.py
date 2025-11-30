@@ -272,4 +272,14 @@ async def analyze_question_papers(request: Request):
     except Exception as e:
         return {"error": str(e)}
 
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://your-vercel-app.vercel.app",  # ← Add your Vercel URL
+        "http://localhost:3000",  # For local testing
+        "*"  # Or use * to allow all (less secure but easier for testing)
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
